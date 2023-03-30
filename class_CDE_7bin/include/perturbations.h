@@ -56,8 +56,8 @@ enum tensor_methods {tm_photons_only,tm_massless_approximation,tm_exact};
 //@{
 
 enum possible_gauges {
-  newtonian, /**< newtonian (or longitudinal) gauge */
-  synchronous /**< synchronous gauge with \f$ \theta_{cdm} = 0 \f$ by convention */
+                      newtonian, /**< newtonian (or longitudinal) gauge */
+                      synchronous /**< synchronous gauge with \f$ \theta_{cdm} = 0 \f$ by convention */
 };
 
 //@}
@@ -186,6 +186,8 @@ struct perturbations
   short has_cmb; /**< do we need CMB-related sources (temperature, polarization) ? */
   short has_lss; /**< do we need LSS-related sources (lensing potential, ...) ? */
 
+  short has_idm_dr; /**< do we have idm-dr interactions? */
+  short has_idm_soundspeed; /**< do we need to consider the dark matter sound speed in interaction models? */
   //@}
 
   /** @name - gauge in which to perform the calculation */
@@ -235,9 +237,9 @@ struct perturbations
   short has_source_delta_g;    /**< do we need source for delta of gammas? */
   short has_source_delta_b;    /**< do we need source for delta of baryons? */
   short has_source_delta_cdm;  /**< do we need source for delta of cold dark matter? */
-  short has_source_delta_idr;   /**< do we need source for delta of interacting dark radiation? */
-  short has_source_delta_idm_dr;/**< do we need source for delta of interacting dark matter (with dr)? */
-  short has_source_delta_dcdm;  /**< do we need source for delta of DCDM? */
+  short has_source_delta_idm;  /**< do we need source for delta of interacting dark matter */
+  short has_source_delta_idr;  /**< do we need source for delta of interacting dark radiation? */
+  short has_source_delta_dcdm; /**< do we need source for delta of DCDM? */
   short has_source_delta_fld;  /**< do we need source for delta of dark energy? */
   short has_source_delta_scf;  /**< do we need source for delta from scalar field? */
   short has_source_delta_dr;   /**< do we need source for delta of decay radiation? */
@@ -249,8 +251,8 @@ struct perturbations
   short has_source_theta_g;    /**< do we need source for theta of gammas? */
   short has_source_theta_b;    /**< do we need source for theta of baryons? */
   short has_source_theta_cdm;  /**< do we need source for theta of cold dark matter? */
+  short has_source_theta_idm;  /**< do we need source for theta of interacting dark matter */
   short has_source_theta_idr;  /**< do we need source for theta of interacting dark radiation? */
-  short has_source_theta_idm_dr; /**< do we need source for theta of interacting dark matter (with dr)? */
   short has_source_theta_dcdm; /**< do we need source for theta of DCDM? */
   short has_source_theta_fld;  /**< do we need source for theta of dark energy? */
   short has_source_theta_scf;  /**< do we need source for theta of scalar field? */
@@ -283,13 +285,13 @@ struct perturbations
   int index_tp_delta_g;   /**< index value for delta of gammas */
   int index_tp_delta_b;   /**< index value for delta of baryons */
   int index_tp_delta_cdm; /**< index value for delta of cold dark matter */
+  int index_tp_delta_idm; /**< index value for delta of interacting dark matter */
   int index_tp_delta_dcdm;/**< index value for delta of DCDM */
   int index_tp_delta_fld;  /**< index value for delta of dark energy */
   int index_tp_delta_scf;  /**< index value for delta of scalar field */
   int index_tp_delta_dr; /**< index value for delta of decay radiation */
   int index_tp_delta_ur; /**< index value for delta of ultra-relativistic neutrinos/relics */
   int index_tp_delta_idr; /**< index value for delta of interacting dark radiation */
-  int index_tp_delta_idm_dr;/**< index value for delta of interacting dark matter (with dr)*/
   int index_tp_delta_ncdm1; /**< index value for delta of first non-cold dark matter species (e.g. massive neutrinos) */
   int index_tp_perturbed_recombination_delta_temp;		/**< Gas temperature perturbation */
   int index_tp_perturbed_recombination_delta_chi;		/**< Inionization fraction perturbation */
@@ -305,7 +307,7 @@ struct perturbations
   int index_tp_theta_scf;   /**< index value for theta of scalar field */
   int index_tp_theta_ur;    /**< index value for theta of ultra-relativistic neutrinos/relics */
   int index_tp_theta_idr;   /**< index value for theta of interacting dark radiation */
-  int index_tp_theta_idm_dr;/**< index value for theta of interacting dark matter (with dr)*/
+  int index_tp_theta_idm;   /**< index value for theta of interacting dark matter */
   int index_tp_theta_dr;    /**< index value for F1 of decay radiation */
   int index_tp_theta_ncdm1; /**< index value for theta of first non-cold dark matter species (e.g. massive neutrinos) */
 
@@ -391,16 +393,16 @@ struct perturbations
   int index_ln_tau_pk;     /**< first index relevant for output of P(k,z) and T(k,z) */
 
   double *** late_sources; /**< Pointer towards the source interpolation table
-                                late_sources[index_md]
-                                            [index_ic * ppt->tp_size[index_md] + index_tp]
-                                            [index_tau * ppt->k_size + index_k]
-                                Note that this is not a replication of part of the sources table,
-                                it is just poiting towards the same memory zone, at the place where the late_sources actually start */
+                              late_sources[index_md]
+                              [index_ic * ppt->tp_size[index_md] + index_tp]
+                              [index_tau * ppt->k_size + index_k]
+                              Note that this is not a replication of part of the sources table,
+                              it is just poiting towards the same memory zone, at the place where the late_sources actually start */
 
   double *** ddlate_sources; /**< Pointer towards the splined source interpolation table with second derivatives with respect to time
-                              ddlate_sources[index_md]
-                                            [index_ic * ppt->tp_size[index_md] + index_tp]
-                                            [index_tau * ppt->k_size + index_k] */
+                                ddlate_sources[index_md]
+                                [index_ic * ppt->tp_size[index_md] + index_tp]
+                                [index_tau * ppt->k_size + index_k] */
 
   //@}
 
@@ -408,8 +410,8 @@ struct perturbations
 
   //@{
 
-   int * index_k_output_values; /**< List of indices corresponding to k-values close to k_output_values for each mode.
-                                     index_k_output_values[index_md*k_output_values_num+ik]*/
+  int * index_k_output_values; /**< List of indices corresponding to k-values close to k_output_values for each mode.
+                                  index_k_output_values[index_md*k_output_values_num+ik]*/
 
   char scalar_titles[_MAXTITLESTRINGLENGTH_]; /**< _DELIMITER_ separated string of titles for scalar perturbation output files. */
   char vector_titles[_MAXTITLESTRINGLENGTH_]; /**< _DELIMITER_ separated string of titles for vector perturbation output files. */
@@ -464,8 +466,8 @@ struct perturbations_vector
   int index_pt_theta_b;   /**< baryon velocity */
   int index_pt_delta_cdm; /**< cdm density */
   int index_pt_theta_cdm; /**< cdm velocity */
-  int index_pt_delta_idm_dr;/**< idm_dr density */
-  int index_pt_theta_idm_dr;/**< idm_dr velocity */
+  int index_pt_delta_idm; /**< idm density */
+  int index_pt_theta_idm; /**< idm velocity */
   int index_pt_delta_dcdm; /**< dcdm density */
   int index_pt_theta_dcdm; /**< dcdm velocity */
   int index_pt_delta_fld;  /**< dark energy density in true fluid case */
@@ -484,7 +486,7 @@ struct perturbations_vector
   int index_pt_l3_idr;    /**< l=3 of interacting dark radiation */
   int l_max_idr;          /**< max momentum in Boltzmann hierarchy (at least 3) for interacting dark radiation */
 
-/* perturbed recombination */
+  /* perturbed recombination */
   int index_pt_perturbed_recombination_delta_temp;		/**< Gas temperature perturbation */
   int index_pt_perturbed_recombination_delta_chi;		/**< Inionization fraction perturbation */
 
@@ -557,8 +559,8 @@ struct perturbations_workspace
   double * pvecthermo;        /**< thermodynamics quantities */
   double * pvecmetric;        /**< metric quantities */
   struct perturbations_vector * pv; /**< pointer to vector of integrated
-                                 perturbations and their
-                                 time-derivatives */
+                                       perturbations and their
+                                       time-derivatives */
 
   double delta_rho;		    /**< total density perturbation (gives delta Too) */
   double rho_plus_p_theta;	/**< total (rho+p)*theta perturbation (gives delta Toi) */
@@ -573,13 +575,16 @@ struct perturbations_workspace
 
   double tca_shear_g;  /**< photon shear in tight-coupling approximation */
   double tca_slip;     /**< photon-baryon slip in tight-coupling approximation */
-  double tca_shear_idm_dr;/**< interacting dark radiation shear in tight coupling appproximation */
+  double tca_shear_idm_dr; /**< interacting dark radiation shear in tight coupling appproximation */
   double rsa_delta_g;  /**< photon density in radiation streaming approximation */
   double rsa_theta_g;  /**< photon velocity in radiation streaming approximation */
   double rsa_delta_ur; /**< photon density in radiation streaming approximation */
   double rsa_theta_ur; /**< photon velocity in radiation streaming approximation */
   double rsa_delta_idr; /**< interacting dark radiation density in dark radiation streaming approximation */
   double rsa_theta_idr; /**< interacting dark radiation velocity in dark radiation streaming approximation */
+
+  double theta_idm; /**< interacting dark matter velocity */
+  double theta_idm_prime; /**< derivative of interacting dark matter velocity in regard to conformal time */
 
   double * delta_ncdm;	/**< relative density perturbation of each ncdm species */
   double * theta_ncdm;	/**< velocity divergence theta of each ncdm species */

@@ -44,7 +44,7 @@ struct fourier {
   enum source_extrapolation extrapolation_method; /**< method for analytical extrapolation of sources beyond pre-computed range */
 
   enum hmcode_baryonic_feedback_model feedback; /** to choose between different baryonic feedback models
-                                                in hmcode (dmonly, gas cooling, Agn or supernova feedback) */
+                                                    in hmcode (dmonly, gas cooling, Agn or supernova feedback) */
   double c_min;      /** for HMcode: minimum concentration in Bullock 2001 mass-concentration relation */
   double eta_0;      /** for HMcode: halo bloating parameter */
   double z_infinity; /** for HMcode: z value at which Dark Energy correction is evaluated needs to be at early times (default */
@@ -99,10 +99,10 @@ struct fourier {
   double * ln_k;   /**< ln_k[index_k] = list of log(k) values */
 
   double * ln_tau;     /**< log(tau) array, only needed if user wants
-                        some output at z>0, instead of only z=0.  This
-                        array only covers late times, used for the
-                        output of P(k) or T(k), and matching the
-                        condition z(tau) < z_max_pk */
+                          some output at z>0, instead of only z=0.  This
+                          array only covers late times, used for the
+                          output of P(k) or T(k), and matching the
+                          condition z(tau) < z_max_pk */
 
   int ln_tau_size;     /**< total number of values in this array */
   int index_ln_tau_pk; /**< first index relevant for output of P(k,z) and T(k,z) */
@@ -141,14 +141,13 @@ struct fourier {
   double ** ddln_pk_l; /**< second derivative of above array with respect to log(tau), for spline interpolation. */
 
   double ** ln_pk_nl;   /**< Total matter power spectrum summed over initial conditions (nonlinear).
-                          Only depends on indices index_pk,index_k, index_tau as:
-                          ln_pk[index_pk][index_tau * pfo->k_size + index_k]
-                       */
+                           Only depends on indices index_pk,index_k, index_tau as:
+                           ln_pk[index_pk][index_tau * pfo->k_size + index_k]
+                        */
 
   double ** ddln_pk_nl; /**< second derivative of above array with respect to log(tau), for spline interpolation. */
 
   double * sigma8;   /**< sigma8[index_pk] */
-  
 
   //@}
 
@@ -164,9 +163,9 @@ struct fourier {
 
   double ** nl_corr_density;   /**< nl_corr_density[index_pk][index_tau * ppt->k_size + index_k] */
   double ** k_nl;              /**< wavenumber at which non-linear corrections become important,
-                                    defined differently by different non_linear_method's */
+                                  defined differently by different non_linear_method's */
   int index_tau_min_nl;        /**< index of smallest value of tau at which nonlinear corrections have been computed
-                                    (so, for tau<tau_min_nl, the array nl_corr_density only contains some factors 1 */
+                                  (so, for tau<tau_min_nl, the array nl_corr_density only contains some factors 1 */
 
   //@}
 
@@ -242,75 +241,75 @@ extern "C" {
   /* external functions (meant to be called from other modules) */
 
   int fourier_pk_at_z(
-                        struct background * pba,
-                        struct fourier *pfo,
-                        enum linear_or_logarithmic mode,
-                        enum pk_outputs pk_output,
-                        double z,
-                        int index_pk,
-                        double * out_pk,
-                        double * out_pk_ic
-                        );
+                      struct background * pba,
+                      struct fourier *pfo,
+                      enum linear_or_logarithmic mode,
+                      enum pk_outputs pk_output,
+                      double z,
+                      int index_pk,
+                      double * out_pk,
+                      double * out_pk_ic
+                      );
 
   int fourier_pks_at_z(
-                         struct background * pba,
-                         struct fourier *pfo,
-                         enum linear_or_logarithmic mode,
-                         enum pk_outputs pk_output,
-                         double z,
-                         double * out_pk,
-                         double * out_pk_ic,
-                         double * out_pk_cb,
-                         double * out_pk_cb_ic
-                         );
+                       struct background * pba,
+                       struct fourier *pfo,
+                       enum linear_or_logarithmic mode,
+                       enum pk_outputs pk_output,
+                       double z,
+                       double * out_pk,
+                       double * out_pk_ic,
+                       double * out_pk_cb,
+                       double * out_pk_cb_ic
+                       );
 
   int fourier_pk_at_k_and_z(
-                              struct background * pba,
-                              struct primordial * ppm,
-                              struct fourier *pfo,
-                              enum pk_outputs pk_output,
-                              double k,
-                              double z,
-                              int index_pk,
-                              double * out_pk,
-                              double * out_pk_ic
-                              );
-
-  int fourier_pks_at_k_and_z(
-                               struct background * pba,
-                               struct primordial * ppm,
-                               struct fourier *pfo,
-                               enum pk_outputs pk_output,
-                               double k,
-                               double z,
-                               double * out_pk,
-                               double * out_pk_ic,
-                               double * out_pk_cb,
-                               double * out_pk_cb_ic
-                               );
-
-  int fourier_pks_at_kvec_and_zvec(
-                                     struct background * pba,
-                                     struct fourier * pfo,
-                                     enum pk_outputs pk_output,
-                                     double * kvec,
-                                     int kvec_size,
-                                     double * zvec,
-                                     int zvec_size,
-                                     double * out_pk,
-                                     double * out_pk_cb
-                                     );
-
-  int fourier_sigmas_at_z(
-                            struct precision * ppr,
                             struct background * pba,
-                            struct fourier * pfo,
-                            double R,
+                            struct primordial * ppm,
+                            struct fourier *pfo,
+                            enum pk_outputs pk_output,
+                            double k,
                             double z,
                             int index_pk,
-                            enum out_sigmas sigma_output,
-                            double * result
+                            double * out_pk,
+                            double * out_pk_ic
                             );
+
+  int fourier_pks_at_k_and_z(
+                             struct background * pba,
+                             struct primordial * ppm,
+                             struct fourier *pfo,
+                             enum pk_outputs pk_output,
+                             double k,
+                             double z,
+                             double * out_pk,
+                             double * out_pk_ic,
+                             double * out_pk_cb,
+                             double * out_pk_cb_ic
+                             );
+
+  int fourier_pks_at_kvec_and_zvec(
+                                   struct background * pba,
+                                   struct fourier * pfo,
+                                   enum pk_outputs pk_output,
+                                   double * kvec,
+                                   int kvec_size,
+                                   double * zvec,
+                                   int zvec_size,
+                                   double * out_pk,
+                                   double * out_pk_cb
+                                   );
+
+  int fourier_sigmas_at_z(
+                          struct precision * ppr,
+                          struct background * pba,
+                          struct fourier * pfo,
+                          double R,
+                          double z,
+                          int index_pk,
+                          enum out_sigmas sigma_output,
+                          double * result
+                          );
 
   int fourier_pk_tilt_at_k_and_z(
                                     struct background * pba,

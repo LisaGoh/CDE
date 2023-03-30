@@ -121,14 +121,14 @@ struct harmonic {
   //@{
 
   struct fourier * pfo; /**< a pointer to the fourier structure is
-                            stored in the harmonic structure. This odd,
-                            unusual and unelegant feature has been
-                            introduced in v2.8 in order to keep in use
-                            some deprecated functions harmonic_pk_...()
-                            that are now pointing at new function
-                            fourier_pk_...(). In the future, if the
-                            deprecated functions are removed, it will
-                            be possible to remove also this pointer. */
+                           stored in the harmonic structure. This odd,
+                           unusual and unelegant feature has been
+                           introduced in v2.8 in order to keep in use
+                           some deprecated functions harmonic_pk_...()
+                           that are now pointing at new function
+                           fourier_pk_...(). In the future, if the
+                           deprecated functions are removed, it will
+                           be possible to remove also this pointer. */
 
   short harmonic_verbose; /**< flag regulating the amount of information sent to standard output (none if set to zero) */
 
